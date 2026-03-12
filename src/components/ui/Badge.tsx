@@ -49,7 +49,7 @@ const variantStyles: Record<BadgeVariant, React.CSSProperties> = {
   },
 };
 
-function resolveVariant(props: BadgeProps): BadgeVariant {
+function resolveVariant(props: Omit<BadgeProps, "children">): BadgeVariant {
   if (props.variant) return props.variant;
 
   if (props.package) {
