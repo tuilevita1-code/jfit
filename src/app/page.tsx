@@ -163,10 +163,10 @@ export default function HomePage() {
       {/* ── HERO ──────────────────────────────────────────────────── */}
       <section
         id="hero"
-        className="relative min-h-screen px-6 md:px-8 pt-24 pb-16"
+        className="relative px-6 md:px-8 pt-24 pb-16"
         style={{ backgroundColor: C.bg }}
       >
-        <div className="max-w-7xl mx-auto grid md:grid-cols-2 gap-12 md:gap-16 items-start min-h-[calc(100vh-6rem)]">
+        <div className="max-w-7xl mx-auto grid md:grid-cols-2 gap-12 md:gap-16 items-start">
           {/* Left: text */}
           <div className="flex flex-col justify-start pt-8 md:pt-16">
             <p
@@ -614,6 +614,26 @@ export default function HomePage() {
           </div>
         </div>
       </section>
+
+      {/* ── Client login prompt ───────────────────────────────── */}
+      <div
+        className="py-6 px-6 md:px-8 text-center"
+        style={{ borderTop: `1px solid ${C.border}`, backgroundColor: C.bg }}
+      >
+        <p
+          className="text-sm"
+          style={{ fontFamily: "var(--font-barlow)", color: C.textFaint }}
+        >
+          Are you a client?{" "}
+          <Link
+            href="/sign-in"
+            className="transition-colors hover:text-white"
+            style={{ color: C.textMuted }}
+          >
+            Login to your portal
+          </Link>
+        </p>
+      </div>
 
       <Footer />
     </div>

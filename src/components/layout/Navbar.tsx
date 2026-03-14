@@ -69,6 +69,18 @@ export function Navbar() {
                 {link.label}
               </a>
             ))}
+            <Link
+              href="/sign-in"
+              className="px-5 py-2.5 text-sm uppercase tracking-widest transition-opacity hover:opacity-70"
+              style={{
+                fontFamily: "var(--font-barlow-condensed)",
+                fontWeight: 600,
+                color: C.textMuted,
+                border: `1px solid ${C.border}`,
+              }}
+            >
+              Login
+            </Link>
             <a
               href="/#contact"
               className="px-5 py-2.5 text-sm uppercase tracking-widest transition-opacity hover:opacity-80"
@@ -138,6 +150,19 @@ export function Navbar() {
                 {link.label}
               </a>
             ))}
+            <Link
+              href="/sign-in"
+              onClick={() => setOpen(false)}
+              className="py-4 text-xl uppercase tracking-[0.12em] transition-opacity hover:opacity-70"
+              style={{
+                fontFamily: "var(--font-barlow-condensed)",
+                fontWeight: 600,
+                color: C.textMuted,
+                borderBottom: `1px solid ${C.border}`,
+              }}
+            >
+              Login
+            </Link>
             <a
               href="/#contact"
               onClick={() => setOpen(false)}
