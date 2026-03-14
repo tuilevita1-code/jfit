@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { Instagram } from "lucide-react";
 
 const C = {
   bg: "#0D0D0D",
@@ -9,23 +10,21 @@ const C = {
   border: "rgba(255,255,255,0.08)",
 };
 
-const navLinks = [
-  { href: "/about", label: "About" },
-  { href: "/services", label: "Services" },
-  { href: "/pricing", label: "Pricing" },
-  { href: "/contact", label: "Contact" },
+const anchorLinks = [
+  { href: "/#about", label: "About" },
+  { href: "/#services", label: "Services" },
+  { href: "/#pricing", label: "Pricing" },
+  { href: "/#contact", label: "Contact" },
+];
+
+const legalLinks = [
   { href: "/privacy", label: "Privacy" },
   { href: "/terms", label: "Terms" },
 ];
 
 export function Footer() {
   return (
-    <footer
-      style={{
-        backgroundColor: C.bg,
-        borderTop: `1px solid ${C.border}`,
-      }}
-    >
+    <footer style={{ backgroundColor: C.bg, borderTop: `1px solid ${C.border}` }}>
       <div className="max-w-7xl mx-auto px-6 md:px-8 py-12">
         <div className="flex flex-col md:flex-row md:items-start md:justify-between gap-10">
           {/* Left — logo + copyright */}
@@ -59,15 +58,22 @@ export function Footer() {
               Navigation
             </p>
             <div className="flex flex-wrap gap-x-6 gap-y-2">
-              {navLinks.map((link) => (
+              {anchorLinks.map((link) => (
+                <a
+                  key={link.href}
+                  href={link.href}
+                  className="text-sm transition-colors hover:text-white"
+                  style={{ fontFamily: "var(--font-barlow)", color: C.textMuted }}
+                >
+                  {link.label}
+                </a>
+              ))}
+              {legalLinks.map((link) => (
                 <Link
                   key={link.href}
                   href={link.href}
                   className="text-sm transition-colors hover:text-white"
-                  style={{
-                    fontFamily: "var(--font-barlow)",
-                    color: C.textMuted,
-                  }}
+                  style={{ fontFamily: "var(--font-barlow)", color: C.textMuted }}
                 >
                   {link.label}
                 </Link>
@@ -98,12 +104,13 @@ export function Footer() {
               +61 452 404 017
             </a>
             <a
-              href="https://instagram.com/trainwitjames/"
+              href="https://www.instagram.com/trainwitjames"
               target="_blank"
               rel="noopener noreferrer"
-              className="text-sm transition-colors hover:text-white"
+              className="flex items-center gap-2 text-sm transition-colors hover:text-white"
               style={{ fontFamily: "var(--font-barlow)", color: C.textMuted }}
             >
+              <Instagram size={15} />
               @trainwitjames
             </a>
           </div>

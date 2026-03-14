@@ -1,9 +1,19 @@
 "use client";
 
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import { Navbar } from "@/components/layout/Navbar";
 import { Footer } from "@/components/layout/Footer";
-import { ChevronDown } from "lucide-react";
+import { ContactForm } from "@/components/marketing/ContactForm";
+import {
+  ChevronDown,
+  ChevronUp,
+  Dumbbell,
+  Zap,
+  TrendingDown,
+  Activity,
+  Target,
+} from "lucide-react";
 
 const C = {
   bg: "#080808",
@@ -16,142 +26,222 @@ const C = {
   border: "rgba(255,255,255,0.08)",
 };
 
-const packages = [
+const services = [
+  {
+    icon: Dumbbell,
+    name: "Strength Building",
+    description:
+      "Build a stronger foundation with structured, progressive programming. Every session is tracked and adjusted to ensure you're consistently moving more weight and getting stronger week by week.",
+  },
+  {
+    icon: Zap,
+    name: "Muscle Growth / Hypertrophy",
+    description:
+      "Maximise muscle development with evidence-based training protocols. Volume, intensity, and recovery are all dialled in to help you build the physique you're working towards.",
+  },
+  {
+    icon: TrendingDown,
+    name: "Weight Loss",
+    description:
+      "Sustainable fat loss through smart training and accountability. No crash programmes — just consistent, trackable progress that produces real results and keeps them.",
+  },
+  {
+    icon: Activity,
+    name: "Athletic Performance",
+    description:
+      "Train for speed, power, agility, and endurance. Whether you play sport or just want to move and feel better, performance training takes your fitness to the next level.",
+  },
+  {
+    icon: Target,
+    name: "Custom Training",
+    description:
+      "Not every goal fits a template. Custom programmes are built entirely around your specific needs, lifestyle, and targets — fully personalised from day one.",
+  },
+];
+
+const plans = [
   {
     name: "Bronze",
     price: "$80",
-    period: "/week",
-    sessions: "2 sessions/week",
+    borderColor: "#bf7b3e",
     color: "#bf7b3e",
     popular: false,
+    sessions: "1x 45min PT session per week",
     features: [
-      "2 personal training sessions",
-      "Custom workout programme",
-      "Progress tracking",
-      "Email support",
+      "1x 45min PT session per week",
+      "Weekly training program",
+      "Monthly body scan",
+      "Pre & post testing",
     ],
   },
   {
     name: "Gold",
     price: "$150",
-    period: "/week",
-    sessions: "3 sessions/week",
+    borderColor: "#c9a84c",
     color: "#c9a84c",
     popular: true,
+    sessions: "2x 45min PT sessions per week",
     features: [
-      "3 personal training sessions",
-      "Custom workout programme",
-      "Nutrition guidance",
-      "Progress tracking",
-      "Priority messaging",
+      "2x 45min PT sessions per week",
+      "Weekly training program",
+      "Monthly body scan",
+      "Pre & post testing",
+      "Weekly check-ins",
     ],
   },
   {
     name: "Platinum",
-    price: "$200",
-    period: "/week",
-    sessions: "Unlimited sessions",
+    price: "$210",
+    borderColor: "#c8c8c8",
     color: "#c8c8c8",
     popular: false,
+    sessions: "3x 45min PT sessions per week",
     features: [
-      "Unlimited personal training",
-      "Full personalised nutrition plan",
-      "Body composition tracking",
-      "Priority support",
-      "Monthly programme reviews",
-      "Supplement guidance",
+      "3x 45min PT sessions per week",
+      "Weekly training program",
+      "Monthly body scan",
+      "Pre & post testing",
+      "Weekly check-ins",
+      "Nutritional advice included",
     ],
   },
 ];
 
 const faqs = [
   {
-    q: "Do I need experience to start?",
-    a: "Not at all. James works with clients at every level — from complete beginners to experienced athletes. Your programme is built around where you are right now.",
+    q: "Where are you based?",
+    a: "I train clients at Goodlife Health Clubs, Richlands, Brisbane QLD.",
   },
   {
-    q: "Where do sessions take place?",
-    a: "All sessions are at Goodlife Health Clubs, Richlands, Brisbane QLD. The facility has everything needed for a world-class workout.",
+    q: "Do I need experience?",
+    a: "Not at all — I work with all fitness levels, from complete beginners to experienced athletes. We start where you are and build from there.",
   },
   {
-    q: "How quickly will I see results?",
-    a: "Most clients notice meaningful changes in strength and energy within the first 4 weeks. Visible body composition changes typically follow by weeks 8–12 with consistent effort.",
+    q: "How do I get started?",
+    a: "Book a free inquiry through the website. We'll chat about your goals and current fitness level, then get you started on the right programme.",
   },
   {
-    q: "What's included in the nutrition guidance?",
-    a: "Gold clients receive macronutrient targets and meal timing guidance. Platinum clients get a full personalised meal plan, weekly check-ins, and ongoing adjustments.",
+    q: "What equipment do I need?",
+    a: "Nothing — all equipment is available at the gym. Just show up ready to train.",
   },
   {
-    q: "Is there a lock-in contract?",
-    a: "No lock-in. All packages are week-to-week. James believes results speak for themselves — you stay because it works.",
+    q: "How long until I see results?",
+    a: "It depends on the individual, their goals, consistency, and starting point. I track your progress and adjust your programme to keep you moving forward.",
+  },
+];
+
+const contactDetails = [
+  {
+    label: "Email",
+    value: "jamesismail020@gmail.com",
+    href: "mailto:jamesismail020@gmail.com",
+  },
+  {
+    label: "Phone",
+    value: "+61 452 404 017",
+    href: "tel:+61452404017",
+  },
+  {
+    label: "Instagram",
+    value: "@trainwitjames",
+    href: "https://instagram.com/trainwitjames/",
+    external: true,
+  },
+  {
+    label: "Location",
+    value: "Goodlife Health Clubs, Richlands, Brisbane QLD",
   },
 ];
 
 export default function HomePage() {
+  const [openFaq, setOpenFaq] = useState<number | null>(null);
+
   return (
     <div style={{ backgroundColor: C.bg, color: C.text, minHeight: "100vh" }}>
       <Navbar />
 
-      {/* ── Hero ────────────────────────────────────────────────── */}
+      {/* ── HERO ──────────────────────────────────────────────────── */}
       <section
-        className="relative flex flex-col items-center justify-center min-h-screen px-6 text-center"
+        id="hero"
+        className="relative min-h-screen px-6 md:px-8 pt-24 pb-16"
         style={{ backgroundColor: C.bg }}
       >
-        <p
-          className="text-sm uppercase tracking-[0.3em] mb-6"
-          style={{ fontFamily: "var(--font-barlow-condensed)", color: C.red }}
-        >
-          Personal Training · Brisbane
-        </p>
+        <div className="max-w-7xl mx-auto grid md:grid-cols-2 gap-12 md:gap-16 items-start min-h-[calc(100vh-6rem)]">
+          {/* Left: text */}
+          <div className="flex flex-col justify-start pt-8 md:pt-16">
+            <p
+              className="text-sm uppercase tracking-[0.3em] mb-6"
+              style={{ fontFamily: "var(--font-barlow-condensed)", color: C.red }}
+            >
+              Personal Training · Brisbane
+            </p>
+            <h1
+              className="uppercase leading-none mb-6"
+              style={{
+                fontFamily: "var(--font-anton)",
+                fontSize: "clamp(3.5rem, 8vw, 6.5rem)",
+                color: C.text,
+              }}
+            >
+              You Are Your
+              <br />
+              Greatest
+              <br />
+              <span style={{ color: C.red }}>Potential.</span>
+            </h1>
+            <p
+              className="max-w-lg text-lg mb-10"
+              style={{ fontFamily: "var(--font-barlow)", color: C.textMuted, lineHeight: 1.7 }}
+            >
+              James Ismail is Brisbane&apos;s premier personal trainer — building stronger,
+              leaner, more confident athletes from all walks of life.
+            </p>
+            <div className="flex flex-col sm:flex-row items-start gap-4">
+              <a
+                href="#contact"
+                className="px-8 py-4 text-sm uppercase tracking-widest transition-opacity hover:opacity-80"
+                style={{
+                  fontFamily: "var(--font-barlow-condensed)",
+                  fontWeight: 700,
+                  backgroundColor: C.red,
+                  color: C.text,
+                }}
+              >
+                Book an Inquiry
+              </a>
+              <a
+                href="#pricing"
+                className="px-8 py-4 text-sm uppercase tracking-widest transition-opacity hover:opacity-70"
+                style={{
+                  fontFamily: "var(--font-barlow-condensed)",
+                  fontWeight: 600,
+                  color: C.textMuted,
+                  border: `1px solid ${C.border}`,
+                }}
+              >
+                Start a Program
+              </a>
+            </div>
+          </div>
 
-        <h1
-          className="uppercase leading-none mb-6"
-          style={{
-            fontFamily: "var(--font-anton)",
-            fontSize: "clamp(3.5rem, 10vw, 7.5rem)",
-            color: C.text,
-          }}
-        >
-          You Are Your
-          <br />
-          Greatest
-          <br />
-          <span style={{ color: C.red }}>Potential.</span>
-        </h1>
-
-        <p
-          className="max-w-xl text-lg mb-10"
-          style={{ fontFamily: "var(--font-barlow)", color: C.textMuted, lineHeight: 1.7 }}
-        >
-          James Ismail is Brisbane&apos;s premier personal trainer — building stronger,
-          leaner, more confident athletes from all walks of life.
-        </p>
-
-        <div className="flex flex-col sm:flex-row items-center gap-4">
-          <Link
-            href="/book"
-            className="px-8 py-4 text-sm uppercase tracking-widest transition-opacity hover:opacity-80"
-            style={{
-              fontFamily: "var(--font-barlow-condensed)",
-              fontWeight: 700,
-              backgroundColor: C.red,
-              color: C.text,
-            }}
-          >
-            Book an Inquiry
-          </Link>
-          <Link
-            href="/pricing"
-            className="px-8 py-4 text-sm uppercase tracking-widest transition-opacity hover:opacity-70"
-            style={{
-              fontFamily: "var(--font-barlow-condensed)",
-              fontWeight: 600,
-              color: C.textMuted,
-              border: `1px solid ${C.border}`,
-            }}
-          >
-            Start a Program
-          </Link>
+          {/* Right: square photo placeholder */}
+          <div className="flex items-start pt-8 md:pt-16">
+            <div
+              className="w-full flex items-center justify-center"
+              style={{
+                aspectRatio: "1/1",
+                backgroundColor: "#161616",
+                border: `1px solid ${C.border}`,
+              }}
+            >
+              <p
+                className="text-sm uppercase tracking-[0.15em]"
+                style={{ fontFamily: "var(--font-barlow-condensed)", color: C.textFaint }}
+              >
+                Photo of James
+              </p>
+            </div>
+          </div>
         </div>
 
         <div
@@ -162,262 +252,309 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* ── About Preview ────────────────────────────────────────── */}
-      <section className="py-24 px-6 md:px-8">
-        <div className="max-w-7xl mx-auto grid md:grid-cols-2 gap-12 md:gap-20 items-center">
-          <div
-            className="w-full flex items-center justify-center"
-            style={{
-              aspectRatio: "3/4",
-              backgroundColor: "#161616",
-              border: `1px solid ${C.border}`,
-            }}
-          >
-            <p
-              className="text-sm uppercase tracking-[0.15em]"
-              style={{ fontFamily: "var(--font-barlow-condensed)", color: C.textFaint }}
-            >
-              Photo of James
-            </p>
-          </div>
-
-          <div className="flex flex-col gap-6">
-            <div>
-              <p
-                className="text-sm uppercase tracking-[0.2em] mb-2"
-                style={{ fontFamily: "var(--font-barlow-condensed)", color: C.red }}
-              >
-                About James
-              </p>
-              <h2
-                className="uppercase leading-none mb-5"
-                style={{
-                  fontFamily: "var(--font-anton)",
-                  fontSize: "clamp(2rem, 4vw, 3rem)",
-                }}
-              >
-                Built Different.
-                <br />
-                Trained Right.
-              </h2>
-              <p
-                className="text-base leading-relaxed mb-4"
-                style={{ fontFamily: "var(--font-barlow)", color: C.textMuted }}
-              >
-                James Ismail is a certified personal trainer based at Goodlife Health Clubs,
-                Richlands. With years of hands-on experience transforming clients through
-                intelligent programming, James combines science-backed training with
-                real-world results.
-              </p>
-              <p
-                className="text-base leading-relaxed"
-                style={{ fontFamily: "var(--font-barlow)", color: C.textMuted }}
-              >
-                Whether your goal is fat loss, muscle gain, or building a healthier life —
-                James builds the programme, holds you accountable, and delivers results.
-              </p>
-            </div>
-            <Link
-              href="/about"
-              className="self-start px-6 py-3 text-sm uppercase tracking-widest transition-opacity hover:opacity-80"
-              style={{
-                fontFamily: "var(--font-barlow-condensed)",
-                fontWeight: 700,
-                backgroundColor: C.red,
-                color: C.text,
-              }}
-            >
-              Learn More
-            </Link>
-          </div>
-        </div>
-      </section>
-
-      {/* ── Packages Preview ─────────────────────────────────────── */}
-      <section className="py-24 px-6 md:px-8" style={{ backgroundColor: C.bgAlt }}>
+      {/* ── ABOUT ─────────────────────────────────────────────────── */}
+      <section id="about" className="py-24 px-6 md:px-8">
         <div className="max-w-7xl mx-auto">
-          <div className="text-center mb-14">
+          <div className="max-w-3xl">
             <p
               className="text-sm uppercase tracking-[0.2em] mb-2"
               style={{ fontFamily: "var(--font-barlow-condensed)", color: C.red }}
             >
-              Packages
+              Who We Are
+            </p>
+            <h2
+              className="uppercase leading-none mb-6"
+              style={{ fontFamily: "var(--font-anton)", fontSize: "clamp(2rem, 4vw, 3rem)" }}
+            >
+              Trainer
+            </h2>
+            <p
+              className="text-base leading-relaxed"
+              style={{ fontFamily: "var(--font-barlow)", color: C.textMuted }}
+            >
+              James Ismail is a certified personal trainer based at Goodlife Health Clubs,
+              Richlands. With a results-driven, data-focused approach, every programme is built
+              around you — tracked, adjusted, and designed to move you forward.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      {/* ── SERVICES ──────────────────────────────────────────────── */}
+      <section id="services" className="py-24 px-6 md:px-8" style={{ backgroundColor: C.bgAlt }}>
+        <div className="max-w-7xl mx-auto">
+          <div className="mb-14">
+            <p
+              className="text-sm uppercase tracking-[0.2em] mb-2"
+              style={{ fontFamily: "var(--font-barlow-condensed)", color: C.red }}
+            >
+              Services
             </p>
             <h2
               className="uppercase leading-none"
-              style={{
-                fontFamily: "var(--font-anton)",
-                fontSize: "clamp(2rem, 4vw, 3rem)",
-              }}
+              style={{ fontFamily: "var(--font-anton)", fontSize: "clamp(2rem, 4vw, 3rem)" }}
+            >
+              What We Train
+            </h2>
+          </div>
+
+          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
+            {services.map((s) => {
+              const Icon = s.icon;
+              return (
+                <div
+                  key={s.name}
+                  className="p-6 rounded-lg flex flex-col gap-4"
+                  style={{ backgroundColor: C.bgCard, border: `1px solid ${C.border}` }}
+                >
+                  <Icon size={24} style={{ color: C.red }} />
+                  <p
+                    className="text-base uppercase tracking-[0.1em]"
+                    style={{
+                      fontFamily: "var(--font-barlow-condensed)",
+                      fontWeight: 700,
+                      color: C.text,
+                    }}
+                  >
+                    {s.name}
+                  </p>
+                  <p
+                    className="text-sm leading-relaxed"
+                    style={{ fontFamily: "var(--font-barlow)", color: C.textMuted }}
+                  >
+                    {s.description}
+                  </p>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      </section>
+
+      {/* ── PRICING ───────────────────────────────────────────────── */}
+      <section id="pricing" className="py-24 px-6 md:px-8">
+        <div className="max-w-7xl mx-auto">
+          <div className="mb-14">
+            <p
+              className="text-sm uppercase tracking-[0.2em] mb-2"
+              style={{ fontFamily: "var(--font-barlow-condensed)", color: C.red }}
+            >
+              Pricing
+            </p>
+            <h2
+              className="uppercase leading-none"
+              style={{ fontFamily: "var(--font-anton)", fontSize: "clamp(2rem, 4vw, 3rem)" }}
             >
               Choose Your Plan
             </h2>
           </div>
 
           <div className="grid md:grid-cols-3 gap-6">
-            {packages.map((pkg) => (
+            {plans.map((plan) => (
               <div
-                key={pkg.name}
-                className="flex flex-col p-6 relative"
+                key={plan.name}
+                className="flex flex-col relative"
                 style={{
                   backgroundColor: C.bgCard,
-                  border: pkg.popular ? `1px solid ${C.red}` : `1px solid ${C.border}`,
+                  border: `1px solid ${plan.borderColor}`,
                 }}
               >
-                {pkg.popular && (
+                {plan.popular && (
                   <div
-                    className="absolute -top-px left-0 right-0 h-0.5"
-                    style={{ backgroundColor: C.red }}
-                  />
+                    className="absolute top-0 right-0 px-3 py-1 text-xs uppercase tracking-widest"
+                    style={{
+                      fontFamily: "var(--font-barlow-condensed)",
+                      fontWeight: 700,
+                      backgroundColor: C.red,
+                      color: C.text,
+                    }}
+                  >
+                    Most Popular
+                  </div>
                 )}
-                {pkg.popular && (
+
+                <div className="p-6" style={{ borderBottom: `1px solid ${C.border}` }}>
                   <p
-                    className="text-xs uppercase tracking-widest mb-4"
+                    className="text-sm uppercase tracking-[0.2em] mb-2 mt-6"
+                    style={{
+                      fontFamily: "var(--font-barlow-condensed)",
+                      fontWeight: 700,
+                      color: plan.color,
+                    }}
+                  >
+                    {plan.name}
+                  </p>
+                  <div className="flex items-baseline gap-1 mb-2">
+                    <span
+                      className="leading-none"
+                      style={{
+                        fontFamily: "var(--font-anton)",
+                        fontSize: "clamp(2.5rem, 4vw, 3.25rem)",
+                      }}
+                    >
+                      {plan.price}
+                    </span>
+                    <span style={{ fontFamily: "var(--font-barlow)", color: C.textFaint }}>
+                      /week
+                    </span>
+                  </div>
+                  <p
+                    className="text-sm"
+                    style={{ fontFamily: "var(--font-barlow)", color: C.textMuted }}
+                  >
+                    {plan.sessions}
+                  </p>
+                </div>
+
+                <div className="p-6 flex flex-col flex-1">
+                  <ul className="flex flex-col gap-2.5 flex-1 mb-8">
+                    {plan.features.map((f) => (
+                      <li
+                        key={f}
+                        className="flex items-start gap-2.5 text-sm"
+                        style={{ fontFamily: "var(--font-barlow)", color: C.textMuted }}
+                      >
+                        <span style={{ color: plan.color, flexShrink: 0 }}>—</span>
+                        {f}
+                      </li>
+                    ))}
+                  </ul>
+                  <a
+                    href="#contact"
+                    className="text-center py-3.5 text-sm uppercase tracking-widest transition-opacity hover:opacity-80 block"
+                    style={{
+                      fontFamily: "var(--font-barlow-condensed)",
+                      fontWeight: 700,
+                      backgroundColor: C.red,
+                      color: C.text,
+                    }}
+                  >
+                    Get Started
+                  </a>
+                </div>
+              </div>
+            ))}
+          </div>
+
+          {/* Trust notes */}
+          <div className="mt-10">
+            <div
+              className="flex flex-col sm:flex-row gap-6 p-6 justify-center items-center text-center"
+              style={{ border: `1px solid ${C.border}` }}
+            >
+              {[
+                { label: "No Lock-In Contract", body: "Stay week-to-week. Cancel anytime with 7 days notice." },
+                { label: "No Hidden Fees", body: "The price you see is the price you pay. Always." },
+                { label: "Results Guaranteed", body: "James backs his work. If you show up, you will change." },
+              ].map((note) => (
+                <div key={note.label} className="flex-1">
+                  <p
+                    className="text-sm uppercase tracking-[0.12em] mb-1"
                     style={{
                       fontFamily: "var(--font-barlow-condensed)",
                       fontWeight: 700,
                       color: C.red,
                     }}
                   >
-                    Most Popular
+                    {note.label}
                   </p>
-                )}
-                <p
-                  className="text-sm uppercase tracking-[0.15em] mb-1"
-                  style={{
-                    fontFamily: "var(--font-barlow-condensed)",
-                    fontWeight: 700,
-                    color: pkg.color,
-                  }}
-                >
-                  {pkg.name}
-                </p>
-                <div className="flex items-baseline gap-1 mb-1">
-                  <span
-                    className="leading-none"
-                    style={{
-                      fontFamily: "var(--font-anton)",
-                      fontSize: "clamp(2.5rem, 4vw, 3rem)",
-                    }}
+                  <p
+                    className="text-sm"
+                    style={{ fontFamily: "var(--font-barlow)", color: C.textMuted }}
                   >
-                    {pkg.price}
-                  </span>
-                  <span style={{ fontFamily: "var(--font-barlow)", color: C.textFaint }}>
-                    {pkg.period}
-                  </span>
+                    {note.body}
+                  </p>
                 </div>
-                <p
-                  className="text-sm mb-6"
-                  style={{ fontFamily: "var(--font-barlow)", color: C.textMuted }}
-                >
-                  {pkg.sessions}
-                </p>
-                <ul className="flex flex-col gap-2 flex-1 mb-8">
-                  {pkg.features.map((f) => (
-                    <li
-                      key={f}
-                      className="flex items-start gap-2 text-sm"
-                      style={{ fontFamily: "var(--font-barlow)", color: C.textMuted }}
-                    >
-                      <span style={{ color: pkg.color, flexShrink: 0 }}>—</span>
-                      {f}
-                    </li>
-                  ))}
-                </ul>
-                <Link
-                  href="/book"
-                  className="text-center py-3 text-sm uppercase tracking-widest transition-opacity hover:opacity-80"
-                  style={{
-                    fontFamily: "var(--font-barlow-condensed)",
-                    fontWeight: 700,
-                    backgroundColor: C.red,
-                    color: C.text,
-                  }}
-                >
-                  Get Started
-                </Link>
-              </div>
-            ))}
-          </div>
-
-          <div className="text-center mt-10">
-            <Link
-              href="/pricing"
-              className="text-sm uppercase tracking-[0.15em] transition-opacity hover:opacity-70"
-              style={{ fontFamily: "var(--font-barlow-condensed)", color: C.textMuted }}
-            >
-              View full pricing details →
-            </Link>
+              ))}
+            </div>
           </div>
         </div>
       </section>
 
-      {/* ── Transformations ──────────────────────────────────────── */}
-      <section className="py-24 px-6 md:px-8">
+      {/* ── CONTACT ───────────────────────────────────────────────── */}
+      <section id="contact" className="py-24 px-6 md:px-8" style={{ backgroundColor: C.bgAlt }}>
         <div className="max-w-7xl mx-auto">
-          <div className="text-center mb-14">
+          <div className="mb-14">
             <p
               className="text-sm uppercase tracking-[0.2em] mb-2"
               style={{ fontFamily: "var(--font-barlow-condensed)", color: C.red }}
             >
-              Results
+              Contact
             </p>
             <h2
-              className="uppercase leading-none mb-4"
-              style={{
-                fontFamily: "var(--font-anton)",
-                fontSize: "clamp(2rem, 4vw, 3rem)",
-              }}
+              className="uppercase leading-none"
+              style={{ fontFamily: "var(--font-anton)", fontSize: "clamp(2rem, 4vw, 3rem)" }}
             >
-              Client Transformations
+              Get in Touch
             </h2>
-            <p
-              className="text-base max-w-xl mx-auto"
-              style={{ fontFamily: "var(--font-barlow)", color: C.textMuted }}
-            >
-              Real people. Real results. Every transformation is the product of
-              consistent effort and smart programming.
-            </p>
           </div>
 
-          <div className="grid md:grid-cols-3 gap-6">
-            {[
-              { label: "Client A", duration: "12 Weeks" },
-              { label: "Client B", duration: "8 Weeks" },
-              { label: "Client C", duration: "16 Weeks" },
-            ].map((t, i) => (
-              <div key={i}>
-                <div
-                  className="w-full flex flex-col items-center justify-center gap-2"
-                  style={{
-                    aspectRatio: "3/4",
-                    backgroundColor: "#161616",
-                    border: `1px solid ${C.border}`,
-                  }}
-                >
-                  <p
-                    className="text-xs uppercase tracking-[0.15em]"
-                    style={{ fontFamily: "var(--font-barlow-condensed)", color: C.textFaint }}
-                  >
-                    Before / After
-                  </p>
-                  <p
-                    className="text-xs uppercase tracking-[0.1em]"
-                    style={{ fontFamily: "var(--font-barlow-condensed)", color: C.textFaint }}
-                  >
-                    {t.label} · {t.duration}
-                  </p>
-                </div>
+          <div className="grid md:grid-cols-5 gap-12 max-w-5xl">
+            {/* Form */}
+            <div className="md:col-span-3">
+              <ContactForm />
+            </div>
+
+            {/* Details */}
+            <div className="md:col-span-2 flex flex-col gap-8">
+              <div className="flex flex-col gap-5">
+                {contactDetails.map((detail) => (
+                  <div key={detail.label}>
+                    <p
+                      className="text-xs uppercase tracking-[0.15em] mb-1"
+                      style={{ fontFamily: "var(--font-barlow-condensed)", color: C.textFaint }}
+                    >
+                      {detail.label}
+                    </p>
+                    {detail.href ? (
+                      <a
+                        href={detail.href}
+                        target={detail.external ? "_blank" : undefined}
+                        rel={detail.external ? "noopener noreferrer" : undefined}
+                        className="text-base transition-colors hover:text-white"
+                        style={{ fontFamily: "var(--font-barlow)", color: C.textMuted }}
+                      >
+                        {detail.value}
+                      </a>
+                    ) : (
+                      <p
+                        className="text-base"
+                        style={{ fontFamily: "var(--font-barlow)", color: C.textMuted }}
+                      >
+                        {detail.value}
+                      </p>
+                    )}
+                  </div>
+                ))}
               </div>
-            ))}
+
+              <div
+                className="p-5"
+                style={{ backgroundColor: C.bgCard, border: `1px solid ${C.border}` }}
+              >
+                <p
+                  className="text-xs uppercase tracking-[0.15em] mb-4"
+                  style={{ fontFamily: "var(--font-barlow-condensed)", color: C.red }}
+                >
+                  Response Time
+                </p>
+                <p
+                  className="text-sm leading-relaxed"
+                  style={{ fontFamily: "var(--font-barlow)", color: C.textMuted }}
+                >
+                  James typically responds within 24 hours. For urgent enquiries, reach out
+                  via Instagram DM at @trainwitjames.
+                </p>
+              </div>
+            </div>
           </div>
         </div>
       </section>
 
-      {/* ── FAQ ──────────────────────────────────────────────────── */}
-      <section className="py-24 px-6 md:px-8" style={{ backgroundColor: C.bgAlt }}>
+      {/* ── FAQ ───────────────────────────────────────────────────── */}
+      <section className="py-24 px-6 md:px-8">
         <div className="max-w-3xl mx-auto">
-          <div className="text-center mb-14">
+          <div className="mb-14">
             <p
               className="text-sm uppercase tracking-[0.2em] mb-2"
               style={{ fontFamily: "var(--font-barlow-condensed)", color: C.red }}
@@ -426,85 +563,56 @@ export default function HomePage() {
             </p>
             <h2
               className="uppercase leading-none"
-              style={{
-                fontFamily: "var(--font-anton)",
-                fontSize: "clamp(2rem, 4vw, 3rem)",
-              }}
+              style={{ fontFamily: "var(--font-anton)", fontSize: "clamp(2rem, 4vw, 3rem)" }}
             >
               Common Questions
             </h2>
           </div>
 
           <div style={{ border: `1px solid ${C.border}` }}>
-            {faqs.map((faq, i) => (
-              <div
-                key={i}
-                className="p-6"
-                style={{
-                  backgroundColor: C.bgCard,
-                  borderBottom: i < faqs.length - 1 ? `1px solid ${C.border}` : "none",
-                }}
-              >
-                <p
-                  className="text-base mb-2"
+            {faqs.map((faq, i) => {
+              const isOpen = openFaq === i;
+              return (
+                <div
+                  key={i}
                   style={{
-                    fontFamily: "var(--font-barlow-condensed)",
-                    fontWeight: 700,
-                    color: C.text,
+                    backgroundColor: C.bgCard,
+                    borderBottom: i < faqs.length - 1 ? `1px solid ${C.border}` : "none",
                   }}
                 >
-                  {faq.q}
-                </p>
-                <p
-                  className="text-base leading-relaxed"
-                  style={{ fontFamily: "var(--font-barlow)", color: C.textMuted }}
-                >
-                  {faq.a}
-                </p>
-              </div>
-            ))}
+                  <button
+                    className="w-full flex items-center justify-between gap-4 p-6 text-left cursor-pointer"
+                    onClick={() => setOpenFaq(isOpen ? null : i)}
+                  >
+                    <span
+                      className="text-base"
+                      style={{
+                        fontFamily: "var(--font-barlow-condensed)",
+                        fontWeight: 700,
+                        color: C.text,
+                      }}
+                    >
+                      {faq.q}
+                    </span>
+                    {isOpen ? (
+                      <ChevronUp size={18} style={{ color: C.red, flexShrink: 0 }} />
+                    ) : (
+                      <ChevronDown size={18} style={{ color: C.textFaint, flexShrink: 0 }} />
+                    )}
+                  </button>
+                  {isOpen && (
+                    <p
+                      className="px-6 pb-6 text-base leading-relaxed"
+                      style={{ fontFamily: "var(--font-barlow)", color: C.textMuted }}
+                    >
+                      {faq.a}
+                    </p>
+                  )}
+                </div>
+              );
+            })}
           </div>
         </div>
-      </section>
-
-      {/* ── CTA Banner ───────────────────────────────────────────── */}
-      <section
-        className="py-24 px-6 md:px-8 text-center"
-        style={{ backgroundColor: C.red }}
-      >
-        <h2
-          className="uppercase leading-none mb-4"
-          style={{
-            fontFamily: "var(--font-anton)",
-            fontSize: "clamp(2rem, 5vw, 3.5rem)",
-            color: C.text,
-          }}
-        >
-          Ready to Start?
-        </h2>
-        <p
-          className="text-base mb-8 max-w-lg mx-auto"
-          style={{
-            fontFamily: "var(--font-barlow)",
-            color: "rgba(255,255,255,0.8)",
-            lineHeight: 1.7,
-          }}
-        >
-          Book your free inquiry session. No commitment required — just show up and
-          let James build your roadmap.
-        </p>
-        <Link
-          href="/book"
-          className="inline-block px-10 py-4 text-sm uppercase tracking-widest transition-opacity hover:opacity-80"
-          style={{
-            fontFamily: "var(--font-barlow-condensed)",
-            fontWeight: 700,
-            backgroundColor: C.text,
-            color: C.red,
-          }}
-        >
-          Book Now
-        </Link>
       </section>
 
       <Footer />
